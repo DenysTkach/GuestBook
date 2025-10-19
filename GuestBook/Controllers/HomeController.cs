@@ -33,18 +33,18 @@ public class HomeController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Name,Message")] GuestBookMessage message)
+    public async Task<IActionResult> Create([Bind("Name,Message")] GuestBookMessage guestBookMessage)
     {
         if (ModelState.IsValid)
         {
-            message.CreatedAt = DateTime.Now;
-            message.IsApproved = false;
-            _context.Add(message);
+            guestBookMessage.CreatedAt = DateTime.Now;
+            guestBookMessage.IsApproved = false;
+            _context.Add(guestBookMessage);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Thank you! Your message has been submitted and is awaiting approval.";
             return RedirectToAction(nameof(Index));
         }
-        return View(message);
+        return View(guestBookMessage);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

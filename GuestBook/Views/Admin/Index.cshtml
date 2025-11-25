@@ -74,6 +74,10 @@
                                         <button type="submit" class="btn btn-sm btn-success">Approve</button>
                                     </form>
                                 }
+                                @if (message.IsApproved)
+                                {
+                                    <a asp-action="Edit" asp-route-id="@message.Id" class="btn btn-sm btn-primary">Edit</a>
+                                }
                                 <form asp-action="Delete" method="post" style="display: inline;">
                                     <input type="hidden" name="id" value="@message.Id" />
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this message?');">Delete</button>

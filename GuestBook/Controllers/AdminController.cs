@@ -53,4 +53,40 @@ public class AdminController : Controller
         }
         return RedirectToAction(nameof(Index));
     }
+
+    public async Task<IActionResult> Edit(int id)
+    {
+        var message = await _context.GuestBookMessages.FindAsync(id);
+        if (message == null || !message.IsApproved)
+        {
+            return NotFound();
+        }
+        return View(message);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Message")] GuestBookMessage editedMessage)
+    {
+        if (id != editedMessage.Id)
+        {
+            return NotFound();
+        }
+
+        var message = await _context.GuestBookMessages.FindAsync(id);
+        if (message == null || !message.IsApproved)
+        {
+            return NotFound();
+        }
+
+        if (ModelState.IsValid)
+        {
+            message.Name = editedMessage.Name;
+            message.Message = editedMessage.Message;
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Message updated successfully.";
+            return RedirectToAction(nameof(Index));
+        }
+        return View(editedMessage);
+    }
 }

@@ -70,6 +70,24 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js" integrity="sha384-OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb" crossorigin="anonymous"></script>
+    <script>
+        // Connect to SignalR hub for automatic database change notifications
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/databaseHub")
+            .withAutomaticReconnect()
+            .build();
+
+        // When database changes, automatically reload the page
+        connection.on("DatabaseChanged", function () {
+            console.log("Database changed, refreshing page...");
+            location.reload();
+        });
+
+        connection.start().catch(function (err) {
+            console.error("SignalR connection error:", err.toString());
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

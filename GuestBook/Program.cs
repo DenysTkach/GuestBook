@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using GuestBook.Data;
 using GuestBook.Models;
+using GuestBook.Hubs;
+using GuestBook.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +42,12 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(14);
     options.SlidingExpiration = true;
 });
+
+// Add SignalR for real-time database change notifications
+builder.Services.AddSignalR();
+
+// Add database file watcher service for automatic page refresh
+builder.Services.AddHostedService<DatabaseWatcherService>();
 
 var app = builder.Build();
 
@@ -104,6 +112,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+// Map SignalR hub for database change notifications
+app.MapHub<DatabaseHub>("/databaseHub");
 
 app.MapControllerRoute(
     name: "default",

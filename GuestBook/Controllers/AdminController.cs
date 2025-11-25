@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using GuestBook.Models;
 using GuestBook.Data;
@@ -5,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GuestBook.Controllers;
 
+[Authorize(Roles = "Administrator")]
 public class AdminController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -17,6 +19,8 @@ public class AdminController : Controller
     public async Task<IActionResult> Index()
     {
         var messages = await _context.GuestBookMessages
+            .Include(m => m.User)
+            .Include(m => m.Category)
             .OrderByDescending(m => m.CreatedAt)
             .ToListAsync();
         return View(messages);

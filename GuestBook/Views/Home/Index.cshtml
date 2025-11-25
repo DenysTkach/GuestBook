@@ -31,7 +31,17 @@
                             <h5 class="card-title">@message.Name</h5>
                             <p class="card-text">@message.Message</p>
                             <p class="card-text">
-                                <small class="text-muted">Posted on @message.CreatedAt.ToString("MMMM dd, yyyy")</small>
+                                <small class="text-muted">
+                                    Posted on @message.CreatedAt.ToString("MMMM dd, yyyy")
+                                    @if (message.Category != null)
+                                    {
+                                        <span class="badge bg-info ms-2">@message.Category.Name</span>
+                                    }
+                                    @if (message.User != null)
+                                    {
+                                        <span class="badge bg-secondary ms-2">by @message.User.FirstName @message.User.LastName</span>
+                                    }
+                                </small>
                             </p>
                         </div>
                     </div>

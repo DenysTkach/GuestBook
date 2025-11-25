@@ -24,6 +24,14 @@
                 </div>
                 
                 <div class="mb-3">
+                    <label asp-for="CategoryId" class="form-label">Category</label>
+                    <select asp-for="CategoryId" asp-items="@ViewBag.Categories" class="form-select">
+                        <option value="">-- Select Category (Optional) --</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+                
+                <div class="mb-3">
                     <button type="submit" class="btn btn-primary">Submit Message</button>
                     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
                 </div>

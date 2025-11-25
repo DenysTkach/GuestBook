@@ -22,6 +22,8 @@
                     <tr>
                         <th>Name</th>
                         <th>Message</th>
+                        <th>Category</th>
+                        <th>User</th>
                         <th>Created At</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -33,6 +35,26 @@
                         <tr>
                             <td>@message.Name</td>
                             <td>@message.Message</td>
+                            <td>
+                                @if (message.Category != null)
+                                {
+                                    <span class="badge bg-info">@message.Category.Name</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (message.User != null)
+                                {
+                                    <span>@message.User.FirstName @message.User.LastName</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Anonymous</span>
+                                }
+                            </td>
                             <td>@message.CreatedAt.ToString("MMMM dd, yyyy HH:mm")</td>
                             <td>
                                 @if (message.IsApproved)

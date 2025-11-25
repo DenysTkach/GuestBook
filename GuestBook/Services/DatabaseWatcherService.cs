@@ -9,8 +9,8 @@ public class DatabaseWatcherService : IHostedService, IDisposable
     private readonly ILogger<DatabaseWatcherService> _logger;
     private readonly string _databasePath;
     private FileSystemWatcher? _watcher;
-    private DateTime _lastNotification = DateTime.MinValue;
-    private readonly TimeSpan _debounceInterval = TimeSpan.FromMilliseconds(500);
+    private long _lastNotificationTicks = 0;
+    private readonly long _debounceIntervalTicks = TimeSpan.FromMilliseconds(500).Ticks;
 
     public DatabaseWatcherService(
         IHubContext<DatabaseHub> hubContext,
@@ -62,18 +62,18 @@ public class DatabaseWatcherService : IHostedService, IDisposable
 
     private async void OnDatabaseChanged(object sender, FileSystemEventArgs e)
     {
-        // Debounce multiple rapid changes
-        var now = DateTime.UtcNow;
-        if (now - _lastNotification < _debounceInterval)
-        {
-            return;
-        }
-        _lastNotification = now;
-
-        _logger.LogInformation("Database file changed, notifying clients");
-        
         try
         {
+            // Thread-safe debounce using Interlocked
+            var nowTicks = DateTime.UtcNow.Ticks;
+            var previousTicks = Interlocked.Exchange(ref _lastNotificationTicks, nowTicks);
+            
+            if (nowTicks - previousTicks < _debounceIntervalTicks)
+            {
+                return;
+            }
+
+            _logger.LogInformation("Database file changed, notifying clients");
             await _hubContext.Clients.All.SendAsync("DatabaseChanged");
         }
         catch (Exception ex)

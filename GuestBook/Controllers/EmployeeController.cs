@@ -34,6 +34,7 @@ public class EmployeeController : Controller
         var message = await _context.GuestBookMessages
             .Include(m => m.User)
             .Include(m => m.Category)
+            .Include(m => m.RepliedByUser)
             .FirstOrDefaultAsync(m => m.Id == id && m.IsApproved);
             
         if (message == null)
@@ -61,6 +62,7 @@ public class EmployeeController : Controller
             return View(await _context.GuestBookMessages
                 .Include(m => m.User)
                 .Include(m => m.Category)
+                .Include(m => m.RepliedByUser)
                 .FirstOrDefaultAsync(m => m.Id == id));
         }
 
@@ -70,11 +72,12 @@ public class EmployeeController : Controller
             return View(await _context.GuestBookMessages
                 .Include(m => m.User)
                 .Include(m => m.Category)
+                .Include(m => m.RepliedByUser)
                 .FirstOrDefaultAsync(m => m.Id == id));
         }
 
         message.Reply = reply;
-        message.RepliedAt = DateTime.Now;
+        message.RepliedAt = DateTime.UtcNow;
         message.RepliedByUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         
         await _context.SaveChangesAsync();

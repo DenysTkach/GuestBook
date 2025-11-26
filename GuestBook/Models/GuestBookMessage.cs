@@ -29,4 +29,16 @@ public class GuestBookMessage
     
     // Navigation property - message belongs to a category
     public Category? Category { get; set; }
+    
+    // Employee reply functionality
+    [StringLength(2000)]
+    public string? Reply { get; set; }
+    
+    public DateTime? RepliedAt { get; set; }
+    
+    // Foreign key for the employee who replied
+    public string? RepliedByUserId { get; set; }
+    
+    // Navigation property - reply made by an employee
+    public ApplicationUser? RepliedByUser { get; set; }
 }

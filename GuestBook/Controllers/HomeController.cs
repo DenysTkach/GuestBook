@@ -25,6 +25,7 @@ public class HomeController : Controller
             .Where(m => m.IsApproved)
             .Include(m => m.User)
             .Include(m => m.Category)
+            .Include(m => m.RepliedByUser)
             .OrderByDescending(m => m.CreatedAt)
             .ToListAsync();
         return View(approvedMessages);

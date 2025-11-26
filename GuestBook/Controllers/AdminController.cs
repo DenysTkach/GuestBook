@@ -153,8 +153,11 @@ public class AdminController : Controller
 
             if (result.Succeeded)
             {
-                // Assign User role by default
-                await _userManager.AddToRoleAsync(user, "User");
+                // Assign User role by default (role is seeded at startup)
+                if (await _roleManager.RoleExistsAsync("User"))
+                {
+                    await _userManager.AddToRoleAsync(user, "User");
+                }
                 TempData["SuccessMessage"] = "User created successfully.";
                 return RedirectToAction(nameof(UserManagement));
             }
@@ -311,6 +314,12 @@ public class AdminController : Controller
             return RedirectToAction(nameof(UserManagement));
         }
 
+        if (!await _roleManager.RoleExistsAsync("Employee"))
+        {
+            TempData["ErrorMessage"] = "Employee role does not exist.";
+            return RedirectToAction(nameof(UserManagement));
+        }
+
         if (!await _userManager.IsInRoleAsync(user, "Employee"))
         {
             await _userManager.AddToRoleAsync(user, "Employee");
@@ -337,6 +346,12 @@ public class AdminController : Controller
         if (user == null)
         {
             TempData["ErrorMessage"] = "User not found.";
+            return RedirectToAction(nameof(UserManagement));
+        }
+
+        if (!await _roleManager.RoleExistsAsync("Employee"))
+        {
+            TempData["ErrorMessage"] = "Employee role does not exist.";
             return RedirectToAction(nameof(UserManagement));
         }
 

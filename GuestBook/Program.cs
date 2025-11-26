@@ -89,6 +89,26 @@ using (var scope = app.Services.CreateScope())
                 await userManager.AddToRoleAsync(adminUser, "Administrator");
             }
         }
+
+        // Create first employee user if it doesn't exist
+        var employeeEmail = "employee@guestbook.com";
+        var employeeUser = await userManager.FindByEmailAsync(employeeEmail);
+        if (employeeUser == null)
+        {
+            employeeUser = new ApplicationUser
+            {
+                UserName = employeeEmail,
+                Email = employeeEmail,
+                FirstName = "Employee",
+                LastName = "One",
+                EmailConfirmed = true
+            };
+            var result = await userManager.CreateAsync(employeeUser, "Work123!");
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(employeeUser, "Employee");
+            }
+        }
     }
     catch (Exception ex)
     {

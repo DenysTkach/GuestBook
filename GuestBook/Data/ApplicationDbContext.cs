@@ -27,6 +27,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<GuestBookMessage>()
+            .HasOne(m => m.RepliedByUser)
+            .WithMany()
+            .HasForeignKey(m => m.RepliedByUserId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<GuestBookMessage>()
             .HasOne(m => m.Category)
             .WithMany(c => c.Messages)
             .HasForeignKey(m => m.CategoryId)

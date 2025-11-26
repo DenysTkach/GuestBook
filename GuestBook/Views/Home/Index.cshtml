@@ -43,6 +43,24 @@
                                     }
                                 </small>
                             </p>
+                            @if (!string.IsNullOrEmpty(message.Reply))
+                            {
+                                <hr />
+                                <div class="bg-light p-2 rounded">
+                                    <strong class="text-primary"><i class="bi bi-reply-fill"></i> Employee Reply:</strong>
+                                    <p class="mb-1">@message.Reply</p>
+                                    <small class="text-muted">
+                                        @if (message.RepliedByUser != null)
+                                        {
+                                            @:- @message.RepliedByUser.FirstName @message.RepliedByUser.LastName
+                                        }
+                                        @if (message.RepliedAt.HasValue)
+                                        {
+                                            @:(@message.RepliedAt.Value.ToString("MMM dd, yyyy"))
+                                        }
+                                    </small>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>

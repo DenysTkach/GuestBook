@@ -1,0 +1,74 @@
+﻿@model IEnumerable<GuestBook.Models.GuestBookMessage>
+@{
+    ViewData["Title"] = "GuestBook";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">GuestBook</h1>
+    
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="mb-4">
+        <a asp-action="Create" class="btn btn-primary">Add New Message</a>
+    </div>
+
+    <h2 class="mb-3">Approved Messages</h2>
+    
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var message in Model)
+            {
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@message.Name</h5>
+                            <p class="card-text">@message.Message</p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Posted on @message.CreatedAt.ToString("MMMM dd, yyyy")
+                                    @if (message.Category != null)
+                                    {
+                                        <span class="badge bg-info ms-2">@message.Category.Name</span>
+                                    }
+                                    @if (message.User != null)
+                                    {
+                                        <span class="badge bg-secondary ms-2">by @message.User.FirstName @message.User.LastName</span>
+                                    }
+                                </small>
+                            </p>
+                            @if (!string.IsNullOrEmpty(message.Reply))
+                            {
+                                <hr />
+                                <div class="bg-light p-2 rounded">
+                                    <strong class="text-primary"><i class="bi bi-reply-fill"></i> Employee Reply:</strong>
+                                    <p class="mb-1">@message.Reply</p>
+                                    <small class="text-muted">
+                                        @if (message.RepliedByUser != null)
+                                        {
+                                            @:- @message.RepliedByUser.FirstName @message.RepliedByUser.LastName
+                                        }
+                                        @if (message.RepliedAt.HasValue)
+                                        {
+                                            @:(@message.RepliedAt.Value.ToString("MMM dd, yyyy"))
+                                        }
+                                    </small>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">No approved messages yet. Be the first to leave a message!</p>
+    }
+</div>

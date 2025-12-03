@@ -1,0 +1,73 @@
+@model GuestBook.Models.GuestBookMessage
+@{
+    ViewData["Title"] = "Reply to Message";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Reply to Message</h1>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <strong>Original Message</strong>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Name</h5>
+                    <p class="card-text">@Model.Message</p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Posted on @Model.CreatedAt.ToString("MMMM dd, yyyy HH:mm")
+                            @if (Model.Category != null)
+                            {
+                                <span class="badge bg-info ms-2">@Model.Category.Name</span>
+                            }
+                        </small>
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <strong>Your Reply</strong>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Reply" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        
+                        <div class="mb-3">
+                            <label for="reply" class="form-label">Reply Message</label>
+                            <textarea name="reply" id="reply" class="form-control" rows="5" maxlength="2000" required>@Model.Reply</textarea>
+                            <div class="form-text">Maximum 2000 characters.</div>
+                            @if (ViewData.ModelState.ContainsKey("reply"))
+                            {
+                                <div class="text-danger">
+                                    @foreach (var error in ViewData.ModelState["reply"]!.Errors)
+                                    {
+                                        <span>@error.ErrorMessage</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(Model.Reply) && Model.RepliedAt.HasValue)
+                        {
+                            <div class="alert alert-info">
+                                <small>
+                                    Last replied on @Model.RepliedAt.Value.ToString("MMMM dd, yyyy HH:mm")
+                                    @if (Model.RepliedByUser != null)
+                                    {
+                                        @:by @Model.RepliedByUser.FirstName @Model.RepliedByUser.LastName
+                                    }
+                                </small>
+                            </div>
+                        }
+                        
+                        <button type="submit" class="btn btn-primary">Submit Reply</button>
+                        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
